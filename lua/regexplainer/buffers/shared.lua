@@ -21,9 +21,11 @@ local M = {}
 ---@field position 'bottom'|'top'
 ---@field size     string
 
+---@alias NuiBorderStyle "'double'"|"'none'"|"'rounded'"|"'shadow'"|"'single'"|"'solid'"
+
 ---@class NuiBorderOptions
 ---@field padding number[]
----@field style   'shadow'|'double'
+---@field style   NuiBorderStyle
 
 ---@class NuiPopupBufferOptions: NuiBufferOptions
 ---@field relative 'cursor'
