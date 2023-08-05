@@ -3,10 +3,10 @@ local M = {}
 function M.map(mode, lhs, rhs, opts)
   local options = {
     noremap = true,
-    silent = true
+    silent = true,
   }
   if opts then
-    options = vim.tbl_extend("force", options, opts)
+    options = vim.tbl_extend('force', options, opts)
   end
   local stat, error = pcall(vim.api.nvim_set_keymap, mode, lhs, rhs, options)
   if not stat then

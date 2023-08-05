@@ -1,10 +1,9 @@
 local descriptions = require 'regexplainer.component.descriptions'
-local comp         = require 'regexplainer.component'
-local utils        = require 'regexplainer.utils'
+local comp = require 'regexplainer.component'
+local utils = require 'regexplainer.utils'
 
 ---@diagnostic disable-next-line: unused-local
-local log = require 'regexplainer.utils'.debug
-
+local log = require('regexplainer.utils').debug
 
 local M = {}
 
@@ -58,16 +57,14 @@ local function get_group_heading(component)
     header = 'capture group ' .. component.capture_group
   end
   return header:gsub(' $', '')
-
 end
 
 ---@param orig_sep  string                # the original configured separator string
 ---@param component RegexplainerComponent # component to render
 ---@return string                         # the next separator string
 local function default_sep(orig_sep, component)
-  local sep = orig_sep;
+  local sep = orig_sep
   if component.depth > 0 then
-
     for _ = 1, component.depth do
       sep = sep .. '  '
     end
@@ -84,21 +81,25 @@ end
 local function get_sublines(component, options, state)
   local sep = options.narrative.separator
 
-  if type(options.narrative.separator) == "function" then
+  if type(options.narrative.separator) == 'function' then
     sep = options.narrative.separator(component)
   else
     sep = default_sep(sep or '\n', component)
   end
 
   local children = component.children
-  while (#children == 1 and (comp.is_term(children[1])
-      or comp.is_pattern(children[1]))) do
+  while #children == 1 and (comp.is_term(children[1]) or comp.is_pattern(children[1])) do
     children = children[1].children
   end
 
-  return M.recurse(children, options, vim.tbl_deep_extend('force', state, {
-    depth = (state.depth or 0) + 1,
-  })), sep
+  return M.recurse(
+    children,
+    options,
+    vim.tbl_deep_extend('force', state, {
+      depth = (state.depth or 0) + 1,
+    })
+  ),
+    sep
 end
 
 --- Get a narrative clause for a component and all it's children
@@ -126,12 +127,16 @@ local function get_narrative_clause(component, options, state)
       local last_in_alt = i == #component.children
       prefix = 'Either '
       infix = infix
-          .. (first_in_alt and '' or #component.children == 2 and ' ' or ', ')
-          .. oxford
-          .. get_narrative_clause(child, options, vim.tbl_extend('force', state, {
+        .. (first_in_alt and '' or #component.children == 2 and ' ' or ', ')
+        .. oxford
+        .. get_narrative_clause(
+          child,
+          options,
+          vim.tbl_extend('force', state, {
             first = first_in_alt,
             last = last_in_alt,
-          }))
+          })
+        )
     end
   end
 
@@ -140,7 +145,6 @@ local function get_narrative_clause(component, options, state)
       infix = '`' .. component.text .. '`'
     else
       for i, child in ipairs(component.children) do
-
         local child_clause = get_narrative_clause(child, options, state)
         if comp.is_capture_group(child) and comp.is_simple_pattern_character(component.children[i - 1]) then
           infix = infix .. '\n' .. child_clause
@@ -155,14 +159,11 @@ local function get_narrative_clause(component, options, state)
     infix = '`' .. utils.escape_markdown(component.text) .. '`'
   end
 
-  if comp.is_identity_escape(component)
-      or comp.is_decimal_escape(component) then
+  if comp.is_identity_escape(component) or comp.is_decimal_escape(component) then
     local escaped = component.text:gsub([[^\+]], '')
     infix = '`' .. escaped .. '`'
-
   elseif comp.is_special_character(component) then
     infix = '**' .. utils.escape_markdown(descriptions.describe_character(component)) .. '**'
-
   elseif comp.is_escape(component) then
     local desc = descriptions.describe_escape(component.text)
     infix = '**' .. desc .. '**'
@@ -180,13 +181,7 @@ local function get_narrative_clause(component, options, state)
     local sublines, sep = get_sublines(component, options, state)
     local contents = table.concat(sublines, sep):gsub(sep .. '$', '')
 
-    infix = get_group_heading(component)
-        .. get_suffix(component)
-        .. ':'
-        .. sep
-        .. contents
-        .. '\n'
-
+    infix = get_group_heading(component) .. get_suffix(component) .. ':' .. sep .. contents .. '\n'
   end
 
   if comp.is_lookaround_assertion(component) then
@@ -204,15 +199,10 @@ local function get_narrative_clause(component, options, state)
     local sublines, sep = get_sublines(component, options, state)
     local contents = table.concat(sublines, sep):gsub(sep .. '$', '')
 
-    infix = get_suffix(component)
-        .. ':'
-        .. sep
-        .. contents
-        .. '\n'
+    infix = get_suffix(component) .. ':' .. sep .. contents .. '\n'
   end
 
-  if not comp.is_capture_group(component)
-      and not comp.is_lookaround_assertion(component) then
+  if not comp.is_capture_group(component) and not comp.is_lookaround_assertion(component) then
     suffix = get_suffix(component)
   end
 
@@ -225,9 +215,9 @@ end
 ---@param options    RegexplainerOptions
 ---@param state      RegexplainerNarrativeRendererState
 function M.recurse(components, options, state)
-  state         = state or {}
+  state = state or {}
   local clauses = {}
-  local lines   = {}
+  local lines = {}
 
   for i, component in ipairs(components) do
     local first = i == 1
@@ -245,12 +235,14 @@ function M.recurse(components, options, state)
       return lines, state
     end
 
-    local next_clause = get_narrative_clause(component,
+    local next_clause = get_narrative_clause(
+      component,
       options,
       vim.tbl_extend('force', state, {
         first = first,
         last = last,
-      }))
+      })
+    )
 
     if comp.is_lookaround_assertion(component) then
       if not clauses[#clauses] then
@@ -264,13 +256,13 @@ function M.recurse(components, options, state)
   end
 
   local separator = options.narrative.separator
-  if type(separator) == "function" then
-    separator = separator({ type = 'root', depth = 0 })
+  if type(separator) == 'function' then
+    separator = separator { type = 'root', depth = 0 }
   end
 
   local narrative = table.concat(clauses, separator)
 
-  for line in narrative:gmatch("([^\n]*)\n?") do
+  for line in narrative:gmatch '([^\n]*)\n?' do
     if #line > 0 then
       table.insert(lines, line)
     end

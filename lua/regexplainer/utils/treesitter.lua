@@ -152,14 +152,14 @@ function M.is_container(node)
   else
     local type = node:type()
     return type == 'anonymous_capturing_group'
-        or type == 'alternation'
-        or type == 'character_class'
-        or type == 'lookaround_assertion'
-        or type == 'named_capturing_group'
-        or type == 'non_capturing_group'
-        or type == 'pattern'
-        or type == 'term'
-        or false
+      or type == 'alternation'
+      or type == 'character_class'
+      or type == 'lookaround_assertion'
+      or type == 'named_capturing_group'
+      or type == 'non_capturing_group'
+      or type == 'pattern'
+      or type == 'term'
+      or false
   end
 end
 
@@ -168,44 +168,46 @@ end
 --
 function M.is_punctuation(type)
   return type == '^'
-      or type == '('
-      or type == ')'
-      or type == '['
-      or type == ']'
-      or type == '!'
-      or type == '='
-      or type == '>'
-      or type == '|'
-      or type == '(?<'
-      or type == '(?:'
-      or type == '(?'
-      or false
+    or type == '('
+    or type == ')'
+    or type == '['
+    or type == ']'
+    or type == '!'
+    or type == '='
+    or type == '>'
+    or type == '|'
+    or type == '(?<'
+    or type == '(?:'
+    or type == '(?'
+    or false
 end
 
 -- Is this the document root (or close enough for our purposes)?
 ---@param node TSNode
 ---@return boolean
 function M.is_document(node)
-  if node == nil then return true else
+  if node == nil then
+    return true
+  else
     local type = node:type()
     return type == 'program'
-        or type == 'document'
-        or type == 'source'
-        or type == 'source_file'
-        or type == 'fragment'
-        or type == 'chunk'
-        -- if we're in an embedded language
-        or type == 'stylesheet'
-        or type == 'haskell'
-        -- Wha happun?
-        or type == 'ERROR' and not (M.is_pattern(node:parent()) or M.is_term(node:parent()))
+      or type == 'document'
+      or type == 'source'
+      or type == 'source_file'
+      or type == 'fragment'
+      or type == 'chunk'
+      -- if we're in an embedded language
+      or type == 'stylesheet'
+      or type == 'haskell'
+      -- Wha happun?
+      or type == 'ERROR' and not (M.is_pattern(node:parent()) or M.is_term(node:parent()))
   end
 end
 
 ---@param node TSNode
 ---@return unknown
 function M.is_control_escape(node)
-  return require 'regexplainer.component'.is_control_escape {
+  return require('regexplainer.component').is_control_escape {
     type = node:type(),
     text = get_node_text(node, 0),
   }
@@ -219,14 +221,11 @@ end
 
 -- Is it a lookaround assertion?
 function M.is_lookaround_assertion(node)
-  return require 'regexplainer.component'.is_lookaround_assertion { type = node:type() }
+  return require('regexplainer.component').is_lookaround_assertion { type = node:type() }
 end
 
 function M.is_modifier(node)
-  return M.is_optional(node)
-      or M.is_one_or_more(node)
-      or M.is_zero_or_more(node)
-      or M.is_count_quantifier(node)
+  return M.is_optional(node) or M.is_one_or_more(node) or M.is_zero_or_more(node) or M.is_count_quantifier(node)
 end
 
 --- Using treesitter, find the current node at cursor, and traverse up to the

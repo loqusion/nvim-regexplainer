@@ -1,8 +1,8 @@
 local component = require 'regexplainer.component'
-local tree      = require 'regexplainer.utils.treesitter'
-local utils     = require 'regexplainer.utils'
-local buffers   = require 'regexplainer.buffers'
-local defer     = require 'regexplainer.utils.defer'
+local tree = require 'regexplainer.utils.treesitter'
+local utils = require 'regexplainer.utils'
+local buffers = require 'regexplainer.buffers'
+local defer = require 'regexplainer.utils.defer'
 local get_node_text = vim.treesitter.get_node_text or vim.treesitter.query.get_node_text
 
 ---@class RegexplainerMappings
@@ -16,10 +16,10 @@ local get_node_text = vim.treesitter.get_node_text or vim.treesitter.query.get_n
 ---Maps config.mappings keys to vim command names and descriptions
 --
 local config_command_map = {
-  show       = { 'RegexplainerShow', 'Show Regexplainer' },
-  hide       = { 'RegexplainerHide', 'Hide Regexplainer' },
-  toggle     = { 'RegexplainerToggle', 'Toggle Regexplainer' },
-  yank       = { 'RegexplainerYank', 'Yank Regexplainer' },
+  show = { 'RegexplainerShow', 'Show Regexplainer' },
+  hide = { 'RegexplainerHide', 'Hide Regexplainer' },
+  toggle = { 'RegexplainerToggle', 'Toggle Regexplainer' },
+  yank = { 'RegexplainerYank', 'Yank Regexplainer' },
   show_split = { 'RegexplainerShowSplit', 'Show Regexplainer in a split Window' },
   show_popup = { 'RegexplainerShowPopup', 'Show Regexplainer in a popup' },
 }
@@ -105,7 +105,7 @@ local function show(options)
     local buffer = buffers.get_buffer(options)
 
     if not buffer and options.debug then
-      return require 'regexplainer.renderers.debug'.render(options, components)
+      return require('regexplainer.renderers.debug').render(options, components)
     end
 
     buffers.render(buffer, renderer, components, options, {
@@ -172,7 +172,9 @@ function M.setup(config)
     vim.api.nvim_create_augroup(augroup_name, { clear = true })
     vim.api.nvim_create_autocmd('CursorMoved', {
       group = 'Regexplainer',
-      pattern = vim.tbl_map(function(x) return '*.' .. x end, local_config.filetypes),
+      pattern = vim.tbl_map(function(x)
+        return '*.' .. x
+      end, local_config.filetypes),
       callback = function()
         if not disable_auto then
           show_debounced_trailing()
@@ -213,7 +215,7 @@ end
 function M.debug_components()
   ---@type any
   local mode = 'debug'
-  show({ auto = false, display = 'split', mode = mode })
+  show { auto = false, display = 'split', mode = mode }
 end
 
 return M

@@ -60,13 +60,15 @@ function M.default_buffer_after(self, _, options, _, state)
       buffer = state.last.parent.bufnr,
       callback = function()
         M.kill_buffer(self)
-      end
+      end,
     })
   end
 end
 
 function M.default_buffer_init(self, _, _, _)
-  if not self._.mounted then self:mount() end
+  if not self._.mounted then
+    self:mount()
+  end
 end
 
 return M

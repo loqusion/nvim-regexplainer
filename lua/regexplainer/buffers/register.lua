@@ -1,5 +1,5 @@
-local Shared = require'regexplainer.buffers.shared'
-local Buffers = require'regexplainer.buffers'
+local Shared = require 'regexplainer.buffers.shared'
+local Buffers = require 'regexplainer.buffers'
 
 local M = {}
 
@@ -10,7 +10,7 @@ local M = {}
 ---@field _      NuiBufferOptions
 ---@field bufnr number
 local Scratch = setmetatable({
-  super = nil
+  super = nil,
 }, {
   __name = 'Scratch',
   __call = function(class, options)
@@ -25,18 +25,18 @@ local Scratch = setmetatable({
     self.bufnr = vim.api.nvim_create_buf(false, true)
     self.type = 'Scratch'
     return self
-  end
+  end,
 })
 
 ---Adhere to the NUI buffer interface by setting the `mounted` flag
 function Scratch:mount()
-  self._.mounted = true;
+  self._.mounted = true
 end
 
 ---Delete the buffer and unset the `mounted` flag
 function Scratch:unmount()
   vim.api.nvim_buf_delete(self.bufnr, { force = true })
-  self._.mounted = false;
+  self._.mounted = false
 end
 
 function Scratch:hide() end
@@ -63,7 +63,7 @@ end
 
 --- Create scratch buffer
 function M.get_buffer(_, _)
-  local buffer = Scratch({})
+  local buffer = Scratch {}
   buffer.type = 'Scratch'
   buffer.init = Shared.default_buffer_init
   buffer.after = after
@@ -71,4 +71,3 @@ function M.get_buffer(_, _)
 end
 
 return M
-

@@ -20,12 +20,11 @@ end
 ---@return string[]
 function M.get_lines(components, _, state)
   local lines = {}
-  local text =
-  'local regexp_string = [['
-      .. state.full_regexp_text
-      .. ']]\n'
-      .. 'local components = '
-      .. vim.inspect(components)
+  local text = 'local regexp_string = [['
+    .. state.full_regexp_text
+    .. ']]\n'
+    .. 'local components = '
+    .. vim.inspect(components)
 
   for line in text:gmatch '([^\n]*)\n?' do
     table.insert(lines, line)

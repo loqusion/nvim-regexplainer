@@ -1,4 +1,4 @@
-local utils  = require 'regexplainer.utils'
+local utils = require 'regexplainer.utils'
 
 local all_buffers = {}
 
@@ -56,20 +56,18 @@ function M.get_buffer(options)
   local buffer
 
   local state = {
-    last = last
+    last = last,
   }
 
   if options.display == 'register' then
-    buffer = require'regexplainer.buffers.register'.get_buffer(options, state)
-
+    buffer = require('regexplainer.buffers.register').get_buffer(options, state)
   elseif options.display == 'split' then
-    buffer = require'regexplainer.buffers.split'.get_buffer(options, state)
-
+    buffer = require('regexplainer.buffers.split').get_buffer(options, state)
   elseif options.display == 'popup' then
-    buffer = require'regexplainer.buffers.popup'.get_buffer(options, state)
+    buffer = require('regexplainer.buffers.popup').get_buffer(options, state)
   end
 
-  table.insert(all_buffers, buffer);
+  table.insert(all_buffers, buffer)
 
   state.last.parent = {
     winnr = vim.api.nvim_get_current_win(),
@@ -105,7 +103,7 @@ function M.kill_buffer(buffer)
         table.remove(all_buffers, i)
       end
     end
-    for _, key in ipairs({ 'popup', 'split' }) do
+    for _, key in ipairs { 'popup', 'split' } do
       if last[key] == buffer then
         last[key] = nil
       end
@@ -170,14 +168,14 @@ end
 
 ---Is it a popup buffer?
 ---@type fun(buffer:RegexplainerBuffer):boolean
-M.is_popup = is_buftype('NuiPopup')
+M.is_popup = is_buftype 'NuiPopup'
 
 ---Is it a split buffer?
 ---@type fun(buffer:RegexplainerBuffer):boolean
-M.is_split = is_buftype('NuiSplit')
+M.is_split = is_buftype 'NuiSplit'
 
 ---Is it a scratch buffer?
 ---@type fun(buffer:RegexplainerBuffer):boolean
-M.is_scratch = is_buftype('Scratch')
+M.is_scratch = is_buftype 'Scratch'
 
 return M

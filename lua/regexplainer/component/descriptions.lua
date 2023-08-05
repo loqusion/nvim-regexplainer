@@ -1,4 +1,4 @@
-local utils          = require 'regexplainer.utils'
+local utils = require 'regexplainer.utils'
 local component_pred = require 'regexplainer.component'
 local get_node_text = vim.treesitter.get_node_text or vim.treesitter.query.get_node_text
 
@@ -36,7 +36,7 @@ function M.describe_character_class(component)
   local description = (component.negative and 'Any except ' or 'One of ')
   for i, child in ipairs(component.children) do
     -- TODO: lua equivalent of Intl?
-    local oxford = (#(component.children) > 1 and i == #(component.children)) and 'or ' or ''
+    local oxford = (#component.children > 1 and i == #component.children) and 'or ' or ''
     local initial_sep = i == 1 and '' or ', '
     local text = utils.escape_markdown(child.text)
 
@@ -57,14 +57,22 @@ end
 ---@return string
 function M.describe_escape(escape)
   local char = escape:gsub([[\\]], [[\]]):sub(2)
-  if char == 'd' then return '0-9'
-  elseif char == 'n' then return 'LF'
-  elseif char == 'r' then return 'CR'
-  elseif char == 's' then return 'WS'
-  elseif char == 'b' then return 'WB'
-  elseif char == 't' then return 'TAB'
-  elseif char == 'w' then return 'WORD'
-  else return char
+  if char == 'd' then
+    return '0-9'
+  elseif char == 'n' then
+    return 'LF'
+  elseif char == 'r' then
+    return 'CR'
+  elseif char == 's' then
+    return 'WS'
+  elseif char == 'b' then
+    return 'WB'
+  elseif char == 't' then
+    return 'TAB'
+  elseif char == 'w' then
+    return 'WORD'
+  else
+    return char
   end
 end
 
@@ -72,10 +80,14 @@ end
 ---@return string
 function M.describe_character(component)
   local type = component.type
-  if type == 'start_assertion' then return 'START'
-  elseif type == 'end_assertion' then return 'END'
-  elseif type == 'any_character' then return 'ANY'
-  else return component.text
+  if type == 'start_assertion' then
+    return 'START'
+  elseif type == 'end_assertion' then
+    return 'END'
+  elseif type == 'any_character' then
+    return 'ANY'
+  else
+    return component.text
   end
 end
 

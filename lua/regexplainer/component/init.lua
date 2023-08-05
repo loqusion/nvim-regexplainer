@@ -1,7 +1,7 @@
 local node_pred = require 'regexplainer.utils.treesitter'
 
 ---@diagnostic disable-next-line: unused-local
-local log = require 'regexplainer.utils'.debug
+local log = require('regexplainer.utils').debug
 
 local get_node_text = vim.treesitter.get_node_text or vim.treesitter.query.get_node_text
 
@@ -76,13 +76,16 @@ local common_keys = {
 local capture_tally = 0
 
 local lookuptables = {}
-setmetatable(lookuptables, { __mode = "v" }) -- make values weak
+setmetatable(lookuptables, { __mode = 'v' }) -- make values weak
 local function get_lookup(xs)
   local key = type(xs) == 'string' and xs or table.concat(xs, '-')
-  if lookuptables[key] then return lookuptables[key]
+  if lookuptables[key] then
+    return lookuptables[key]
   else
     local lookup = {}
-    for _, v in ipairs(xs) do lookup[v] = true end
+    for _, v in ipairs(xs) do
+      lookup[v] = true
+    end
     lookuptables[key] = lookup
     return lookup
   end
@@ -114,16 +117,15 @@ end
 ---@return boolean
 --
 function M.is_lookaround_assertion(component)
-  return component.type:find('^lookaround_assertion') ~= nil
+  return component.type:find '^lookaround_assertion' ~= nil
 end
 
 ---@param component RegexplainerComponent
 ---@return boolean
 --
 function M.is_lookbehind_assertion(component)
-  return component.type:find('^lookaround_assertion') ~= nil
+  return component.type:find '^lookaround_assertion' ~= nil
 end
-
 
 -- Does a container component contain nothing by pattern_characters?
 ---@param component RegexplainerComponent
@@ -144,7 +146,7 @@ end
 ---@return boolean
 --
 function M.is_capture_group(component)
-  local found = component.type:find('capturing_group$')
+  local found = component.type:find 'capturing_group$'
   return found ~= nil
 end
 
@@ -170,9 +172,7 @@ function M.is_simple_pattern_character(component)
     return false
   end
 
-  if M.is_identity_escape(component)
-      or M.is_decimal_escape(component)
-      or component.type ~= 'pattern_character' then
+  if M.is_identity_escape(component) or M.is_decimal_escape(component) or component.type ~= 'pattern_character' then
     return M.is_simple_component(component)
   end
 
@@ -183,9 +183,9 @@ end
 ---@return boolean
 --
 function M.is_special_character(component)
-  return not not (component.type:find 'assertion$'
-      or component.type:find 'character$'
-      and component.type ~= 'pattern_character')
+  return not not (
+    component.type:find 'assertion$' or component.type:find 'character$' and component.type ~= 'pattern_character'
+  )
 end
 
 ---@param node TreesitterNode
@@ -209,7 +209,9 @@ end
 function M.make_components(node, parent, root_regex_node)
   local text = get_node_text(node, 0)
   local cached = lookuptables[text]
-  if cached then return cached end
+  if cached then
+    return cached
+  end
 
   local components = {}
 
@@ -238,11 +240,9 @@ function M.make_components(node, parent, root_regex_node)
       if M.is_simple_pattern_character(previous) and #previous.text > 1 then
         local last_char = previous.text:sub(-1)
 
-        if M.is_identity_escape(previous)
-            and M.is_simple_component(previous) then
+        if M.is_identity_escape(previous) and M.is_simple_component(previous) then
           previous.text = previous.text .. last_char
-        elseif not M.is_control_escape(previous)
-            and not M.is_character_class_escape(previous) then
+        elseif not M.is_control_escape(previous) and not M.is_character_class_escape(previous) then
           previous.text = previous.text:sub(1, -2)
           table.insert(components, { type = 'pattern_character', text = last_char })
           previous = components[#components]
@@ -263,33 +263,28 @@ function M.make_components(node, parent, root_regex_node)
       }
     elseif type == 'count_quantifier' then
       append_previous {
-        quantifier = require 'regexplainer.component.descriptions'.describe_quantifier(child),
+        quantifier = require('regexplainer.component.descriptions').describe_quantifier(child),
         lazy = has_lazy(child),
       }
 
-
       -- pattern characters and simple escapes can be collapsed together
       -- so long as they are not immediately followed by a modifier
-    elseif type == 'pattern_character'
-        and M.is_simple_pattern_character(previous) then
+    elseif type == 'pattern_character' and M.is_simple_pattern_character(previous) then
       if previous.type == 'identity_escape' then
         previous.text = previous.text:gsub([[^\+]], '')
       end
 
       previous.text = previous.text .. child_text
       previous.type = 'pattern_character'
-    elseif (type == 'identity_escape' or type == 'decimal_escape')
-        and M.is_simple_pattern_character(previous) then
-      if node_type ~= 'character_class'
-          and not node_pred.is_modifier(child:next_sibling()) then
+    elseif (type == 'identity_escape' or type == 'decimal_escape') and M.is_simple_pattern_character(previous) then
+      if node_type ~= 'character_class' and not node_pred.is_modifier(child:next_sibling()) then
         previous.text = previous.text .. child_text:gsub([[^\+]], '')
       else
         table.insert(components, {
           type = type,
-          text = child_text
+          text = child_text,
         })
       end
-
     elseif type == 'start_assertion' then
       table.insert(components, { type = type, text = '^' })
 
@@ -319,7 +314,7 @@ function M.make_components(node, parent, root_regex_node)
           text = lookbehind,
           negative = lookbehind:match [[^%(%?<!]] ~= nil,
           depth = (parent and parent.depth or 0) + 1,
-          children = M.make_components(child, nil, root_regex_node)
+          children = M.make_components(child, nil, root_regex_node),
         })
       else
         table.insert(components, {
@@ -334,11 +329,10 @@ function M.make_components(node, parent, root_regex_node)
       end
       -- all other node types should be added to the tree
     else
-
       ---@type RegexplainerComponent
       local component = {
         type = type,
-        text = child_text
+        text = child_text,
       }
 
       -- increment `depth` for each layer of capturing groups encountered
@@ -358,10 +352,8 @@ function M.make_components(node, parent, root_regex_node)
         table.insert(components, component)
 
         -- skip group_name and punctuation nodes
-      elseif type ~= 'group_name'
-          and not node_pred.is_punctuation(type) then
+      elseif type ~= 'group_name' and not node_pred.is_punctuation(type) then
         if node_pred.is_container(child) then
-
           -- increment the capture group tally
           if type == 'named_capturing_group' or type == 'anonymous_capturing_group' then
             capture_tally = capture_tally + 1
@@ -379,10 +371,10 @@ function M.make_components(node, parent, root_regex_node)
           end
 
           if node_pred.is_lookaround_assertion(child) then
-            local _, _, behind, sign   = string.find(text, '%(%?(<?)([=!])')
-            component.type     = type
+            local _, _, behind, sign = string.find(text, '%(%?(<?)([=!])')
+            component.type = type
             component.negative = sign == '!'
-            component.depth    = (parent and parent.depth or 0) + 1
+            component.depth = (parent and parent.depth or 0) + 1
             component.direction = behind == '<' and 'behind' or 'ahead'
           end
 
@@ -390,9 +382,11 @@ function M.make_components(node, parent, root_regex_node)
           component.children = M.make_components(child, component, root_regex_node)
 
           -- FIXME: find the root cause of this weird case
-          if #component.children == 1
-              and component.capture_group ~= nil
-              and component.capture_group == component.children[1].capture_group then
+          if
+            #component.children == 1
+            and component.capture_group ~= nil
+            and component.capture_group == component.children[1].capture_group
+          then
             component = component.children[1]
           end
         end

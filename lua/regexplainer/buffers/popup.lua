@@ -27,7 +27,7 @@ local function init(self, lines, _, state)
     end
   end
 
-  if (win_width * .75) < width then
+  if (win_width * 0.75) < width then
     width = '75%'
   end
 
@@ -36,7 +36,9 @@ end
 
 local function after(self, _, options, state)
   if options.auto then
-    local function unmount() self:unmount() end
+    local function unmount()
+      self:unmount()
+    end
     local bufnr = state.last.parent.bufnr
     vim.api.nvim_create_autocmd('BufLeave', { buffer = bufnr, once = true, callback = unmount })
     self:on({ 'BufLeave', 'BufWinLeave', 'CursorMoved' }, unmount, { once = true })
@@ -50,10 +52,8 @@ function M.get_buffer(options, state)
 
   local Popup = require 'nui.popup'
 
-  local buffer = Popup(vim.tbl_deep_extend('force',
-    Shared.shared_options,
-    popup_defaults, options.popup or {}
-  ) or popup_defaults)
+  local buffer =
+    Popup(vim.tbl_deep_extend('force', Shared.shared_options, popup_defaults, options.popup or {}) or popup_defaults)
 
   buffer.type = 'NuiPopup'
 

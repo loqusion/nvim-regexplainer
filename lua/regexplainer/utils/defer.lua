@@ -13,7 +13,7 @@ local function td_validate(fn, ms)
       function(ms)
         return type(ms) == 'number' and ms > 0
       end,
-      "number > 0",
+      'number > 0',
     },
   }
 end
@@ -166,16 +166,16 @@ function M.test_defer(bouncer, ms, firstlast)
 
   local timeout = ms or 2000
 
-  local bounced = bouncers[bouncer](
-    function(i) vim.cmd('echom "' .. bouncer .. ': ' .. i .. '"') end,
-    timeout,
-    firstlast
-  )
+  local bounced = bouncers[bouncer](function(i)
+    vim.cmd('echom "' .. bouncer .. ': ' .. i .. '"')
+  end, timeout, firstlast)
 
   for i, _ in ipairs { 1, 2, 3, 4, 5 } do
     bounced(i)
-    vim.schedule(function() vim.cmd('echom ' .. i) end)
-    vim.fn.call("wait", { 1000, "v:false" })
+    vim.schedule(function()
+      vim.cmd('echom ' .. i)
+    end)
+    vim.fn.call('wait', { 1000, 'v:false' })
   end
 end
 

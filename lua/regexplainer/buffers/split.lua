@@ -21,10 +21,7 @@ function M.get_buffer(options, state)
     return state.last.split
   end
 
-  local buffer = Split(vim.tbl_deep_extend('force',
-                                           Shared.shared_options,
-                                           split_defaults,
-                                           options.split or {}))
+  local buffer = Split(vim.tbl_deep_extend('force', Shared.shared_options, split_defaults, options.split or {}))
 
   buffer.type = 'NuiSplit'
 
@@ -33,7 +30,7 @@ function M.get_buffer(options, state)
   buffer.init = Shared.default_buffer_init
   buffer.after = after
 
-  vim.notify('split buf')
+  vim.notify 'split buf'
   return buffer
 end
 
