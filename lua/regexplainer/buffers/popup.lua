@@ -9,7 +9,7 @@ local popup_defaults = {
   size = 1,
   border = {
     style = 'shadow',
-    padding = { 1, 2 },
+    padding = { 0, 1 },
   },
 }
 
