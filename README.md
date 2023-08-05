@@ -23,8 +23,8 @@ use { 'bennypowers/nvim-regexplainer',
       } }
 ```
 
-You need to install `regex` with `nvim-treesitter`, as well as the grammar for 
-whichever host language you're using. So for example if you wish to use 
+You need to install `regex` with `nvim-treesitter`, as well as the grammar for
+whichever host language you're using. So for example if you wish to use
 Regexplainer with TypeScript sources, you need to do this:
 
 ```vimscript
@@ -56,19 +56,10 @@ require'regexplainer'.setup {
   },
 
   -- Whether to log debug messages
-  debug = false, 
+  debug = false,
 
   -- 'split', 'popup'
   display = 'popup',
-
-  mappings = {
-    toggle = 'gR',
-    -- examples, not defaults:
-    -- show = 'gS',
-    -- hide = 'gH',
-    -- show_split = 'gP',
-    -- show_popup = 'gU',
-  },
 
   narrative = {
     separator = '\n',
@@ -87,8 +78,8 @@ The window will be reused, and has the filetype `Regexplainer`
 
 #### Popup Below Cursor
 
-Set to `popup` (the default) to display the explainer in a popup below the 
-cursor. When the cursor moves, the popup closes. if `auto` is set, the popup 
+Set to `popup` (the default) to display the explainer in a popup below the
+cursor. When the cursor moves, the popup closes. if `auto` is set, the popup
 will automatically display whenever the cursor moves inside a regular expression
 You can call `show` with your own display type to override your config
 
@@ -96,7 +87,7 @@ You can call `show` with your own display type to override your config
 require'regexplainer'.show { display = 'split' }
 ```
 
-Or use the commands `RegexplainerShowSplit` or `RegexplainerShowPopup`. 
+Or use the commands `RegexplainerShowSplit` or `RegexplainerShowPopup`.
 `RegexplainerHide` and `RegexplainerToggle` are also available.
 
 You can customize the popup window by specifying `options.popup.border`,
@@ -115,14 +106,14 @@ require'regexplainer'.show {
 }
 ```
 
-You could use this to, for example, set a different border based on the state of 
+You could use this to, for example, set a different border based on the state of
 your editor.
 
 ### Render Options
 
-`narrative.separator` can also be a function taking the current component and 
-returning a string clause separator. For example, to separate clauses by a new 
-line, followed by `> ` for each level of capture-group depth, define the 
+`narrative.separator` can also be a function taking the current component and
+returning a string clause separator. For example, to separate clauses by a new
+line, followed by `> ` for each level of capture-group depth, define the
 following function:
 
 ```lua
@@ -145,27 +136,31 @@ Input:
 /zero(one(two(?<inner>three)))/;
 ```
 
-Output: 
+Output:
 
 ```markdown
 `zero`  
-capture group 1:  
+capture group 1:
+
 > `one`  
-> capture group 2:  
+> capture group 2:
+>
 > > `two`  
-> > named capture group 3 `inner`:  
+> > named capture group 3 `inner`:
+> >
 > > > `three`
 ```
 
 ## Yank
-You can yank the regexplanation into any register with the `yank` function. The 
-default register is `"`. This can be useful if you'd like to share the 
-explanation of a regexp with your teammates, or if you'd like to report a 
-mistake in regexplainer. The argument to `yank` is either a string (the register 
+
+You can yank the regexplanation into any register with the `yank` function. The
+default register is `"`. This can be useful if you'd like to share the
+explanation of a regexp with your teammates, or if you'd like to report a
+mistake in regexplainer. The argument to `yank` is either a string (the register
 to yank to) or a table with `register: string` and options to `show` (e.g. `mode 
 = 'narrative', narrative = {}`, etc.).
 
-For example, to copy the regexplanation to your system clipboard, use either of 
+For example, to copy the regexplanation to your system clipboard, use either of
 these:
 
 ```lua
@@ -182,14 +177,14 @@ You can also use the command `RegexplainerYank`
 :RegexplainerYank +
 ```
 
-## 🗃️  TODO list
+## 🗃️ TODO list
+
 - [ ] Display Regexp [railroad diagrams][railroad-diagrams] using ASCII-art
-- [ ] Display Regexp [railroad diagrams][railroad-diagrams] via 
-  [hologram][hologram] and [kitty image protocol][kitty], maybe with a sixel 
-  fallback
+- [ ] Display Regexp [railroad diagrams][railroad-diagrams] via
+      [hologram][hologram] and [kitty image protocol][kitty], maybe with a sixel
+      fallback
 - [ ] online documentation
 - [x] some unit tests or something, i guess
-
 
 [made-with-lua]: https://img.shields.io/badge/Made%20with%20Lua-blueviolet.svg?style=for-the-badge&logo=lua
 [build-status]: https://img.shields.io/github/actions/workflow/status/bennypowers/nvim-regexplainer/main.yml?branch=main&label=tests&style=for-the-badge

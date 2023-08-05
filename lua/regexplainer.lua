@@ -14,7 +14,6 @@ local get_node_text = vim.treesitter.get_node_text or vim.treesitter.query.get_n
 ---@field show_popup? string      # shows regexplainer in a popup window
 
 ---Maps config.mappings keys to vim command names and descriptions
---
 local config_command_map = {
   show = { 'RegexplainerShow', 'Show Regexplainer' },
   hide = { 'RegexplainerHide', 'Hide Regexplainer' },
@@ -33,7 +32,6 @@ local augroup_name = 'Regexplainer'
 ---@field filetypes?        string[]                             # Filetypes (extensions) to automatically show regexplainer.
 ---@field debug?            boolean                              # Notify debug logs
 ---@field display?          'split'|'popup'
----@field mappings?         RegexplainerMappings                 # keymappings to automatically bind. Supports `which-key`
 ---@field narrative?        RegexplainerNarrativeRendererOptions # Options for the narrative renderer
 ---@field popup?            NuiPopupBufferOptions                # options for the popup buffer
 ---@field split?            NuiSplitBufferOptions                # options for the split buffer
@@ -54,9 +52,6 @@ local default_config = {
   },
   debug = false,
   display = 'popup',
-  mappings = {
-    toggle = 'gR',
-  },
   narrative = {
     separator = '\n',
   },
@@ -152,20 +147,6 @@ end
 --
 function M.setup(config)
   local_config = vim.tbl_deep_extend('keep', config or {}, default_config)
-
-  -- bind keys from config
-  local has_which_key = pcall(require, 'which-key')
-  for cmd, binding in pairs(local_config.mappings) do
-    local command = ':' .. config_command_map[cmd][1] .. '<CR>'
-
-    if has_which_key then
-      local wk = require 'which-key'
-      local description = config_command_map[cmd][2]
-      wk.register({ [binding] = { command, description } }, { mode = 'n' })
-    else
-      utils.map('n', binding, command)
-    end
-  end
 
   -- setup autocommand
   if local_config.auto then
