@@ -3,25 +3,10 @@ local tree = require 'regexplainer.utils.treesitter'
 local utils = require 'regexplainer.utils'
 local buffers = require 'regexplainer.buffers'
 local defer = require 'regexplainer.utils.defer'
+---@diagnostic disable-next-line: deprecated
 local get_node_text = vim.treesitter.get_node_text or vim.treesitter.query.get_node_text
 
----@class RegexplainerMappings
----@field show?       string      # shows regexplainer
----@field hide?       string      # hides regexplainer
----@field toggle?     string      # toggles regexplainer
----@field yank?       string      # yanks regexplainer
----@field show_split? string      # shows regexplainer in a split window
----@field show_popup? string      # shows regexplainer in a popup window
-
----Maps config.mappings keys to vim command names and descriptions
-local config_command_map = {
-  show = { 'RegexplainerShow', 'Show Regexplainer' },
-  hide = { 'RegexplainerHide', 'Hide Regexplainer' },
-  toggle = { 'RegexplainerToggle', 'Toggle Regexplainer' },
-  yank = { 'RegexplainerYank', 'Yank Regexplainer' },
-  show_split = { 'RegexplainerShowSplit', 'Show Regexplainer in a split Window' },
-  show_popup = { 'RegexplainerShowPopup', 'Show Regexplainer in a popup' },
-}
+local M = {}
 
 ---Augroup for auto = true
 local augroup_name = 'Regexplainer'
@@ -106,6 +91,11 @@ local function show(options)
     buffers.render(buffer, renderer, components, options, {
       full_regexp_text = get_node_text(node, 0),
     })
+
+    vim.api.nvim_create_autocmd({ 'CursorMoved', 'InsertEnter', 'InsertLeave' }, {
+      once = true,
+      callback = M.hide,
+    })
   else
     buffers.hide_all()
   end
@@ -116,8 +106,6 @@ local disable_auto = false
 local show_debounced_trailing, timer_trailing = defer.debounce_trailing(show, 5)
 
 buffers.register_timer(timer_trailing)
-
-local M = {}
 
 --- Show the explainer for the regexp under the cursor
 ---@param options? RegexplainerOptions
