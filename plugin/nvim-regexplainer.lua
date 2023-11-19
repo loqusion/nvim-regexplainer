@@ -1,30 +1,42 @@
-local function command (name, callback, options)
+local function command(name, callback, options)
   local final_opts = vim.tbl_deep_extend('force', options or {}, { bang = true })
   vim.api.nvim_create_user_command(name, callback, final_opts)
 end
 
-local regexplainer = require'regexplainer'
+local regexplainer = require('regexplainer')
 
-command('RegexplainerShow',   function () regexplainer.show() end)
-command('RegexplainerHide',   function () regexplainer.hide() end)
-command('RegexplainerToggle', function () regexplainer.toggle() end)
+command('RegexplainerShow', function()
+  regexplainer.show()
+end)
+command('RegexplainerHide', function()
+  regexplainer.hide()
+end)
+command('RegexplainerToggle', function()
+  regexplainer.toggle()
+end)
 
-command('RegexplainerYank',   function (args)
+command('RegexplainerYank', function(args)
   regexplainer.yank(args.args)
 end, {
-  nargs = '*'
+  nargs = '*',
 })
 
-command('RegexplainerShowSplit', function () regexplainer.show {
-  display = 'split',
-} end)
+command('RegexplainerShowSplit', function()
+  regexplainer.show({
+    display = 'split',
+  })
+end)
 
-command('RegexplainerShowPopup', function () regexplainer.show {
-  display = 'popup',
-} end)
+command('RegexplainerShowPopup', function()
+  regexplainer.show({
+    display = 'popup',
+  })
+end)
 
-command('RegexplainerDebug', function () regexplainer.show {
-  display = 'split',
-  mode = 'debug',
-  auto = false,
-} end)
+command('RegexplainerDebug', function()
+  regexplainer.show({
+    display = 'split',
+    mode = 'debug',
+    auto = false,
+  })
+end)

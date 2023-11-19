@@ -6,7 +6,7 @@ local M = {}
 
 ---Validates args for `throttle()` and  `debounce()`.
 local function td_validate(fn, ms)
-  vim.validate {
+  vim.validate({
     fn = { fn, 'f' },
     ms = {
       ms,
@@ -15,7 +15,7 @@ local function td_validate(fn, ms)
       end,
       'number > 0',
     },
-  }
+  })
 end
 
 --- Throttles a function on the leading edge. Automatically `schedule_wrap()`s.
@@ -170,7 +170,7 @@ function M.test_defer(bouncer, ms, firstlast)
     vim.cmd('echom "' .. bouncer .. ': ' .. i .. '"')
   end, timeout, firstlast)
 
-  for i, _ in ipairs { 1, 2, 3, 4, 5 } do
+  for i, _ in ipairs({ 1, 2, 3, 4, 5 }) do
     bounced(i)
     vim.schedule(function()
       vim.cmd('echom ' .. i)

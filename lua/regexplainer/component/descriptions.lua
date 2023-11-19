@@ -1,5 +1,5 @@
-local utils = require 'regexplainer.utils'
-local component_pred = require 'regexplainer.component'
+local utils = require('regexplainer.utils')
+local component_pred = require('regexplainer.component')
 local get_node_text = vim.treesitter.get_node_text or vim.treesitter.query.get_node_text
 
 local M = {}
@@ -11,9 +11,9 @@ local M = {}
 function M.describe_quantifier(quantifier_node)
   -- TODO: there's probably a better way to do this
   local text = get_node_text(quantifier_node, 0)
-  if text:match ',' then
+  if text:match(',') then
     local matches = {}
-    for match in text:gmatch '%d+' do
+    for match in text:gmatch('%d+') do
       table.insert(matches, match)
     end
     local min = matches[1]
@@ -24,7 +24,7 @@ function M.describe_quantifier(quantifier_node)
       return '>= ' .. min .. 'x'
     end
   else
-    return text:match '%d+' .. 'x'
+    return text:match('%d+') .. 'x'
   end
 end
 

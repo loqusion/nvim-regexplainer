@@ -1,8 +1,8 @@
-local component = require 'regexplainer.component'
-local tree = require 'regexplainer.utils.treesitter'
-local utils = require 'regexplainer.utils'
-local buffers = require 'regexplainer.buffers'
-local defer = require 'regexplainer.utils.defer'
+local component = require('regexplainer.component')
+local tree = require('regexplainer.utils.treesitter')
+local utils = require('regexplainer.utils')
+local buffers = require('regexplainer.buffers')
+local defer = require('regexplainer.utils.defer')
 ---@diagnostic disable-next-line: deprecated
 local get_node_text = vim.treesitter.get_node_text or vim.treesitter.query.get_node_text
 
@@ -77,7 +77,7 @@ local function show(options)
     else
       utils.notify(options.mode .. ' is not a valid renderer', 'warning')
       utils.notify(renderer, 'error')
-      renderer = require 'regexplainer.renderers.narrative'
+      renderer = require('regexplainer.renderers.narrative')
     end
 
     local components = component.make_components(node, nil, node)
@@ -184,7 +184,7 @@ end
 function M.debug_components()
   ---@type any
   local mode = 'debug'
-  show { auto = false, display = 'split', mode = mode }
+  show({ auto = false, display = 'split', mode = mode })
 end
 
 return M

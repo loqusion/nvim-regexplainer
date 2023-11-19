@@ -1,6 +1,6 @@
-local descriptions = require 'regexplainer.component.descriptions'
-local comp = require 'regexplainer.component'
-local utils = require 'regexplainer.utils'
+local descriptions = require('regexplainer.component.descriptions')
+local comp = require('regexplainer.component')
+local utils = require('regexplainer.utils')
 
 ---@diagnostic disable-next-line: unused-local
 local log = require('regexplainer.utils').debug
@@ -257,12 +257,12 @@ function M.recurse(components, options, state)
 
   local separator = options.narrative.separator
   if type(separator) == 'function' then
-    separator = separator { type = 'root', depth = 0 }
+    separator = separator({ type = 'root', depth = 0 })
   end
 
   local narrative = table.concat(clauses, separator)
 
-  for line in narrative:gmatch '([^\n]*)\n?' do
+  for line in narrative:gmatch('([^\n]*)\n?') do
     if #line > 0 then
       table.insert(lines, line)
     end

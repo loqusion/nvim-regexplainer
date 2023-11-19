@@ -1,5 +1,5 @@
-local Shared = require 'regexplainer.buffers.shared'
-local Split = require 'nui.split'
+local Shared = require('regexplainer.buffers.shared')
+local Split = require('nui.split')
 
 local M = {}
 
@@ -30,7 +30,7 @@ function M.get_buffer(options, state)
   buffer.init = Shared.default_buffer_init
   buffer.after = after
 
-  vim.notify 'split buf'
+  vim.notify('split buf')
   return buffer
 end
 

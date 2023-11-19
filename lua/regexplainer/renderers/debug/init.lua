@@ -26,7 +26,7 @@ function M.get_lines(components, _, state)
     .. 'local components = '
     .. vim.inspect(components)
 
-  for line in text:gmatch '([^\n]*)\n?' do
+  for line in text:gmatch('([^\n]*)\n?') do
     table.insert(lines, line)
   end
 

@@ -1,4 +1,4 @@
-local Shared = require 'regexplainer.buffers.shared'
+local Shared = require('regexplainer.buffers.shared')
 
 local M = {}
 
@@ -31,7 +31,7 @@ local function init(self, lines, _, state)
     width = '75%'
   end
 
-  self:set_size { width = width, height = #lines }
+  self:set_size({ width = width, height = #lines })
 end
 
 local function after(self, _, options, state)
@@ -50,7 +50,7 @@ function M.get_buffer(options, state)
     return state.last.popup
   end
 
-  local Popup = require 'nui.popup'
+  local Popup = require('nui.popup')
 
   local buffer =
     Popup(vim.tbl_deep_extend('force', Shared.shared_options, popup_defaults, options.popup or {}) or popup_defaults)

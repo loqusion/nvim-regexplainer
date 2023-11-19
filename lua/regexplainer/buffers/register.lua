@@ -1,5 +1,5 @@
-local Shared = require 'regexplainer.buffers.shared'
-local Buffers = require 'regexplainer.buffers'
+local Shared = require('regexplainer.buffers.shared')
+local Buffers = require('regexplainer.buffers')
 
 local M = {}
 
@@ -63,7 +63,7 @@ end
 
 --- Create scratch buffer
 function M.get_buffer(_, _)
-  local buffer = Scratch {}
+  local buffer = Scratch({})
   buffer.type = 'Scratch'
   buffer.init = Shared.default_buffer_init
   buffer.after = after

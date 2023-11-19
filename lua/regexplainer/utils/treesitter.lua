@@ -90,7 +90,7 @@ end
 ---@param root_lang_tree LanguageTree
 ---@return TSNode?
 local function get_root_for_position(row, col, root_lang_tree)
-  local lang_tree = root_lang_tree:language_for_range { row, col, row, col }
+  local lang_tree = root_lang_tree:language_for_range({ row, col, row, col })
 
   for _, tree in pairs(lang_tree:trees()) do
     local root = tree:root()
@@ -207,10 +207,10 @@ end
 ---@param node TSNode
 ---@return unknown
 function M.is_control_escape(node)
-  return require('regexplainer.component').is_control_escape {
+  return require('regexplainer.component').is_control_escape({
     type = node:type(),
     text = get_node_text(node, 0),
-  }
+  })
 end
 
 -- Should we stop here when traversing upwards through the tree from the cursor node?
@@ -221,7 +221,7 @@ end
 
 -- Is it a lookaround assertion?
 function M.is_lookaround_assertion(node)
-  return require('regexplainer.component').is_lookaround_assertion { type = node:type() }
+  return require('regexplainer.component').is_lookaround_assertion({ type = node:type() })
 end
 
 function M.is_modifier(node)

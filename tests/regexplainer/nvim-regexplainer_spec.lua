@@ -1,8 +1,8 @@
-local Utils = require 'tests.helpers.util'
-local log = require 'regexplainer.utils'.debug
+local Utils = require('tests.helpers.util')
+local log = require('regexplainer.utils').debug
 
-local regexplainer = require 'regexplainer'
-local scan = require 'plenary.scandir'
+local regexplainer = require('regexplainer')
+local scan = require('plenary.scandir')
 
 local function setup_narrative()
   regexplainer.setup()
@@ -11,7 +11,7 @@ end
 local function file_filter(filename)
   local filter = vim.env.REGEXPLAINER_TEST_FILTER or nil
   if filter then
-    return filename:match [[Sudoku]]
+    return filename:match([[Sudoku]])
   else
     return #filename > 0
   end
@@ -22,7 +22,7 @@ local function row_filter(row)
   return true
 end
 
-describe("Regexplainer", function()
+describe('Regexplainer', function()
   before_each(Utils.clear_test_state)
   describe('Narratives', function()
     local all_files = scan.scan_dir('tests/fixtures/narrative', { depth = 1 })
@@ -32,7 +32,7 @@ describe("Regexplainer", function()
       describe(category, function()
         before_each(setup_narrative)
         for result in Utils.iter_regexes_with_descriptions(file) do
-          if (row_filter(result.row)) then
+          if row_filter(result.row) then
             it(result.text, function()
               Utils.assert_string(result.text, result.example, file .. ':' .. result.row)
             end)
@@ -47,13 +47,13 @@ describe("Regexplainer", function()
       setup_narrative()
       local bufnr = vim.api.nvim_create_buf(true, true)
 
-      local expected = "Either `hello` or `world`\n"
+      local expected = 'Either `hello` or `world`\n'
       local actual = 'FAIL'
 
       vim.api.nvim_buf_call(bufnr, function()
         vim.bo.filetype = 'javascript'
-        vim.api.nvim_set_current_line[[/hello|world/;]]
-        vim.cmd [[:norm l]]
+        vim.api.nvim_set_current_line([[/hello|world/;]])
+        vim.cmd([[:norm l]])
         regexplainer.yank(Utils.register_name)
         actual = vim.fn.getreg(Utils.register_name)
       end)

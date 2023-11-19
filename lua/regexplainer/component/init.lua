@@ -1,4 +1,4 @@
-local node_pred = require 'regexplainer.utils.treesitter'
+local node_pred = require('regexplainer.utils.treesitter')
 
 ---@diagnostic disable-next-line: unused-local
 local log = require('regexplainer.utils').debug
@@ -110,21 +110,21 @@ end
 ---@return boolean
 --
 function M.is_escape(component)
-  return component.type == 'boundary_assertion' or component.type:match 'escape$'
+  return component.type == 'boundary_assertion' or component.type:match('escape$')
 end
 
 ---@param component RegexplainerComponent
 ---@return boolean
 --
 function M.is_lookaround_assertion(component)
-  return component.type:find '^lookaround_assertion' ~= nil
+  return component.type:find('^lookaround_assertion') ~= nil
 end
 
 ---@param component RegexplainerComponent
 ---@return boolean
 --
 function M.is_lookbehind_assertion(component)
-  return component.type:find '^lookaround_assertion' ~= nil
+  return component.type:find('^lookaround_assertion') ~= nil
 end
 
 -- Does a container component contain nothing by pattern_characters?
@@ -146,7 +146,7 @@ end
 ---@return boolean
 --
 function M.is_capture_group(component)
-  local found = component.type:find 'capturing_group$'
+  local found = component.type:find('capturing_group$')
   return found ~= nil
 end
 
@@ -184,7 +184,7 @@ end
 --
 function M.is_special_character(component)
   return not not (
-    component.type:find 'assertion$' or component.type:find 'character$' and component.type ~= 'pattern_character'
+    component.type:find('assertion$') or component.type:find('character$') and component.type ~= 'pattern_character'
   )
 end
 
@@ -257,15 +257,15 @@ function M.make_components(node, parent, root_regex_node)
     -- the following node types should not be added to the component tree
     -- instead, they should merely modify the previous node in the tree
     if type == 'optional' or type == 'one_or_more' or type == 'zero_or_more' then
-      append_previous {
+      append_previous({
         [type] = true,
         lazy = has_lazy(child),
-      }
+      })
     elseif type == 'count_quantifier' then
-      append_previous {
+      append_previous({
         quantifier = require('regexplainer.component.descriptions').describe_quantifier(child),
         lazy = has_lazy(child),
-      }
+      })
 
       -- pattern characters and simple escapes can be collapsed together
       -- so long as they are not immediately followed by a modifier
@@ -304,7 +304,7 @@ function M.make_components(node, parent, root_regex_node)
 
       local error_term_text = text:sub(from_re_start_to_err_start)
 
-      local lookbehind = error_term_text:match [[(%(%?<!?(.*)%))]]
+      local lookbehind = error_term_text:match([[(%(%?<!?(.*)%))]])
 
       local is_lookbehind = lookbehind ~= nil
 
@@ -312,7 +312,7 @@ function M.make_components(node, parent, root_regex_node)
         table.insert(components, {
           type = 'lookbehind_assertion',
           text = lookbehind,
-          negative = lookbehind:match [[^%(%?<!]] ~= nil,
+          negative = lookbehind:match([[^%(%?<!]]) ~= nil,
           depth = (parent and parent.depth or 0) + 1,
           children = M.make_components(child, nil, root_regex_node),
         })
@@ -336,12 +336,12 @@ function M.make_components(node, parent, root_regex_node)
       }
 
       -- increment `depth` for each layer of capturing groups encountered
-      if type:find [[capturing_group$]] then
+      if type:find([[capturing_group$]]) then
         component.depth = (parent and parent.depth or 0) + 1
       end
 
       -- negated character class
-      if type == 'character_class' and component.text:find [[^%[%^]] then
+      if type == 'character_class' and component.text:find([[^%[%^]]) then
         component.negative = true
         component.children = M.make_components(child, nil, root_regex_node)
         table.insert(components, component)

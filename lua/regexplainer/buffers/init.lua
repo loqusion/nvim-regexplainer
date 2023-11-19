@@ -1,4 +1,4 @@
-local utils = require 'regexplainer.utils'
+local utils = require('regexplainer.utils')
 
 local all_buffers = {}
 
@@ -103,7 +103,7 @@ function M.kill_buffer(buffer)
         table.remove(all_buffers, i)
       end
     end
-    for _, key in ipairs { 'popup', 'split' } do
+    for _, key in ipairs({ 'popup', 'split' }) do
       if last[key] == buffer then
         last[key] = nil
       end
@@ -168,14 +168,14 @@ end
 
 ---Is it a popup buffer?
 ---@type fun(buffer:RegexplainerBuffer):boolean
-M.is_popup = is_buftype 'NuiPopup'
+M.is_popup = is_buftype('NuiPopup')
 
 ---Is it a split buffer?
 ---@type fun(buffer:RegexplainerBuffer):boolean
-M.is_split = is_buftype 'NuiSplit'
+M.is_split = is_buftype('NuiSplit')
 
 ---Is it a scratch buffer?
 ---@type fun(buffer:RegexplainerBuffer):boolean
-M.is_scratch = is_buftype 'Scratch'
+M.is_scratch = is_buftype('Scratch')
 
 return M

@@ -1,10 +1,10 @@
-local regexplainer = require 'regexplainer'
-local parsers = require "nvim-treesitter.parsers"
+local regexplainer = require('regexplainer')
+local parsers = require('nvim-treesitter.parsers')
 
 local get_node_text = vim.treesitter.get_node_text or vim.treesitter.query.get_node_text
 
 ---@diagnostic disable-next-line: unused-local
-local log = require 'regexplainer.utils'.debug
+local log = require('regexplainer.utils').debug
 
 local M = {}
 
@@ -16,20 +16,19 @@ M.register_name = 'test'
 -- so, at long last, we do some sring manipulation
 
 local parse_query = vim.treesitter.query.parse or vim.treesitter.query.parse_query
-local query_js = parse_query('javascript', [[
+local query_js = parse_query(
+  'javascript',
+  [[
   (comment) @comment
   (expression_statement
     (regex)) @expr
-  ]])
+  ]]
+)
 
 local function get_expected_from_jsdoc(comment)
   local lines = {}
-  for line in comment:gmatch("([^\n]*)\n?") do
-    local clean = line
-        :gsub('^/%*%*', '')
-        :gsub('%*/$', '')
-        :gsub('%s+%* ?', '', 1)
-        :gsub('@example EXPECTED%: ?', '')
+  for line in comment:gmatch('([^\n]*)\n?') do
+    local clean = line:gsub('^/%*%*', ''):gsub('%*/$', ''):gsub('%s+%* ?', '', 1):gsub('@example EXPECTED%: ?', '')
     table.insert(lines, clean)
   end
 
@@ -59,17 +58,14 @@ local function get_cases()
 end
 
 function M.trim(s)
-  return (string.gsub(s, "^%s*(.-)%s*$", "%1"))
+  return (string.gsub(s, '^%s*(.-)%s*$', '%1'))
 end
 
 local test_buffers = {}
 
 function M.editfile(testfile)
-  vim.cmd("e! " .. testfile)
-  assert.are.same(
-    vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":p"),
-    vim.fn.fnamemodify(testfile, ":p")
-  )
+  vim.cmd('e! ' .. testfile)
+  assert.are.same(vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ':p'), vim.fn.fnamemodify(testfile, ':p'))
 end
 
 function M.iter_regexes_with_descriptions(filename)
@@ -96,10 +92,10 @@ function M.clear_test_state()
   for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
     vim.api.nvim_buf_delete(bufnr, { force = true })
   end
-  assert(#vim.api.nvim_list_bufs() == 1, "Failed to properly clear buffers")
+  assert(#vim.api.nvim_list_bufs() == 1, 'Failed to properly clear buffers')
 
-  assert(#vim.api.nvim_tabpage_list_wins(0) == 1, "Failed to properly clear tab")
-  assert(vim.fn.getreg(M.register_name) == '', "Failed to properly clear register")
+  assert(#vim.api.nvim_tabpage_list_wins(0) == 1, 'Failed to properly clear tab')
+  assert(vim.fn.getreg(M.register_name) == '', 'Failed to properly clear register')
 end
 
 function M.assert_popup_text_at_row(row, expected)
@@ -110,8 +106,8 @@ function M.assert_popup_text_at_row(row, expected)
   end
   regexplainer.show()
   M.wait_for_regexplainer_buffer()
-  local bufnr = require 'regexplainer.buffers'.get_buffers()[1].bufnr
-  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false);
+  local bufnr = require('regexplainer.buffers').get_buffers()[1].bufnr
+  local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
   local text = table.concat(lines, '\n')
   local regex = vim.api.nvim_buf_get_lines(0, 0, -1, false)[row]
   return assert.are.same(expected, text, row .. ': ' .. regex)
@@ -123,12 +119,7 @@ function M.assert_string(regexp, expected, message)
   vim.opt_local.filetype = 'javascript'
   vim.api.nvim_set_current_line(regexp)
 
-  local text = table.concat(vim.api.nvim_buf_get_lines(
-    M.wait_for_regexplainer_buffer(),
-    0,
-    -1,
-    false
-  ), '\n')
+  local text = table.concat(vim.api.nvim_buf_get_lines(M.wait_for_regexplainer_buffer(), 0, -1, false), '\n')
 
   regexplainer.hide()
 
@@ -139,17 +130,17 @@ function M.assert_string(regexp, expected, message)
 end
 
 function M.sleep(n)
-  os.execute("sleep " .. tonumber(n))
+  os.execute('sleep ' .. tonumber(n))
 end
 
 function M.wait_for_regexplainer_buffer()
   local buffers = {}
   local count = 0
   repeat
-    vim.cmd.norm'l'
+    vim.cmd.norm('l')
     regexplainer.show()
     count = count + 1
-    buffers = require 'regexplainer.buffers'.get_buffers()
+    buffers = require('regexplainer.buffers').get_buffers()
   until #buffers > 0 or count >= 20
   return buffers[1].bufnr
 end
@@ -157,14 +148,15 @@ end
 function M.get_info_on_capture(id, name, node, metadata)
   local yes, text = pcall(get_node_text, node, 0)
   return {
-    id, name,
+    id,
+    name,
     text = yes and text or nil,
     metadata = metadata,
     type = node:type(),
-    pos = { node:range() }
+    pos = { node:range() },
   }
 end
 
-M.dedent = require 'plenary.strings'.dedent
+M.dedent = require('plenary.strings').dedent
 
 return M
